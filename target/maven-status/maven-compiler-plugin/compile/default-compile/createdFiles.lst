@@ -2,6 +2,7 @@ negocio\Enum\EstadoTurno.class
 negocio\clases\Dado.class
 negocio\clases\Ficha.class
 negocio\clases\Partida.class
+presentacion\Parchis.class
 negocio\clases\Jugador.class
 negocio\Enum\EstadoFicha.class
 control\ControladorFicha.class
@@ -14,7 +15,5 @@ presentacion\PantallaJuego.class
 control\ControladorDado.class
 negocio\interfaces\ObservadorPartida.class
 negocio\Enum\Color.class
-negocio\clases\pruebas.class
 negocio\interfaces\IPartida.class
 negocio\interfaces\SujetoPartida.class
-presentacion\Main.class
