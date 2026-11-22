@@ -31,6 +31,10 @@ public class Partida implements IPartida, SujetoPartida {
     private int numeroDeFichas;
 
     public Partida(Tablero tablero, int numeroDeFichas) {
+        //validamos el numero de fichas por jugador 
+        if(numeroDeFichas<3 || numeroDeFichas>6){
+            throw new IllegalArgumentException("El numero de fichas por jugador debe de estar entre 3 a 6 fichas");
+        }
         //inicializamos las listas y las variables de control de la partida
         this.listaJugadores = new ArrayList<>();
         this.jugadorActual = null;

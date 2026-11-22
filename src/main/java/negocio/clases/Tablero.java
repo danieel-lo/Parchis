@@ -25,6 +25,10 @@ public class Tablero {
         //primero inicializamos los atributos y las listas
         this.casillas = new ArrayList<>();
         this.pasillosFinales = new EnumMap<>(Color.class);
+        //validamos el numero de salida configurado 
+        if(valorSalidaConfigurado < 1 || valorSalidaConfigurado > 6){
+            throw new IllegalArgumentException("El valor de la salida debe de estar entre 1 y 6");
+        }
         this.valorSalidaConfigurado = valorSalidaConfigurado;
         this.casillasSegurasPorAla = casillasSegurasPorAla;
         //validamos el numero de casillas seguras por ala, el min es de 1 y max es de 5
