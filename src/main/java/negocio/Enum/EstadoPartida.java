@@ -9,5 +9,5 @@ package negocio.Enum;
  * @author Jorge
  */
 public enum EstadoPartida {
-    EN_CURSO,FINALIZAR
+    EN_CURSO,FINALIZAR, EN_ESPERA
 }

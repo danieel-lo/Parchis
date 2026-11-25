@@ -6,9 +6,12 @@ package negocio.clases;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import negocio.Enum.Color;
 import negocio.Enum.EstadoFicha;
 import negocio.Enum.EstadoPartida;
 import negocio.Enum.EstadoTurno;
+import negocio.eventos.JugadorUnidoEvent;
 import negocio.interfaces.IPartida;
 import negocio.interfaces.ObservadorPartida;
 import negocio.interfaces.SujetoPartida;
@@ -36,7 +39,7 @@ public class Partida implements IPartida, SujetoPartida {
         this.jugadorActual = null;
         this.tablero = tablero;
         this.dado = new Dado();
-        this.estadoPartida = EstadoPartida.EN_CURSO;
+        this.estadoPartida = EstadoPartida.EN_ESPERA;
         this.estadoTurno = EstadoTurno.ESPERANDO_TIRO;
         this.observadores = new ArrayList<>();
         this.bonificacionPendiente = 0;
@@ -342,4 +345,46 @@ public class Partida implements IPartida, SujetoPartida {
         observadores.forEach(obs -> obs.actualizar(this));
     }
 
+    @Override
+    public List<Jugador> getJugadores() {
+        return listaJugadores;
+    }
+
+    @Override
+    public int getNumFichas() {
+        return numeroDeFichas;
+    }
+
+    // Métodos nuevos para el caso de uso Unirse a Partida 
+
+    public boolean tieneCupoDisponible() {
+        return listaJugadores.size() < 4;
+    }
+
+    public boolean estaColorDisponible(Color color) {
+        if (color == null) {
+            return false;
+        }
+        return listaJugadores.stream().noneMatch(j -> j.getColor() == color);
+    }
+
+    public JugadorUnidoEvent unirseAPartida(String nombre, String avatar, Color color) {
+        if (estadoPartida != EstadoPartida.EN_ESPERA) {
+            throw new IllegalStateException("La partida ya ha iniciado o no está disponible.");
+        }
+        if (!tieneCupoDisponible()) {
+            throw new IllegalStateException("La sala está llena (máximo 4 jugadores).");
+        }
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre del jugador es obligatorio.");
+        }
+        if (!estaColorDisponible(color)) {
+            throw new IllegalArgumentException("El color seleccionado ya está ocupado.");
+        }
+
+        Jugador nuevoJugador = new Jugador(UUID.randomUUID().toString(), nombre.trim(), avatar, color);
+        agregarJugador(nuevoJugador);
+
+        return new JugadorUnidoEvent(nuevoJugador, listaJugadores);
+    }
 }

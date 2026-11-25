@@ -4,6 +4,7 @@
  */
 package negocio.interfaces;
 
+import java.util.List;
 import negocio.Enum.EstadoPartida;
 import negocio.Enum.EstadoTurno;
 import negocio.clases.Dado;
@@ -29,4 +30,10 @@ public interface IPartida {
     public EstadoPartida getEstadoPartida();
 
     public int getBonificacionPendiente();
+    
+    // Unirse
+    
+    public List<Jugador> getJugadores();
+    
+    public int getNumFichas();
 }
