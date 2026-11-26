@@ -9,6 +9,7 @@ import control.ControladorFicha;
 import negocio.Enum.Color;
 import negocio.clases.Jugador;
 import negocio.clases.Partida;
+import negocio.interfaces.IPartida;
 import presentacion.PantallaJuego;
 
 /**
@@ -16,6 +17,13 @@ import presentacion.PantallaJuego;
  * @author Jorge
  */
 public class SimuladorInicioPartida {
+
+    public void iniciar(IPartida partida) {
+        if (!(partida instanceof Partida)) {
+            throw new IllegalArgumentException("El simulador requiere una Partida");
+        }
+        iniciar((Partida) partida);
+    }
 
     public void iniciar(Partida partida) {
 

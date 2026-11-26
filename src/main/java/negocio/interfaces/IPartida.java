@@ -14,7 +14,7 @@ import negocio.clases.Tablero;
  *
  * @author Jorge
  */
-public interface IPartida {
+public interface IPartida extends SujetoPartida {
 
     public Jugador getJugadorActual();
 
@@ -29,4 +29,7 @@ public interface IPartida {
     public EstadoPartida getEstadoPartida();
 
     public int getBonificacionPendiente();
+    
+    public void confirmarConfiguracion();
+    
 }

@@ -4,6 +4,9 @@
  */
 package presentacion;
 
+import control.ControlConfigurarPartida;
+import negocio.fabricas.FabricaPartidas;
+import negocio.interfaces.IFabricaPartidas;
 import simulacion.SimuladorInicioPartida;
 
 /**
@@ -16,14 +19,15 @@ public class Prueba {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        PantallaPrincipal pantalla= new PantallaPrincipal();
-        
-       pantalla.setPartidaCreadaListener(partida->{
-           SimuladorInicioPartida simulador=new SimuladorInicioPartida();
-           simulador.iniciar(partida);
-       });
-        
+        IFabricaPartidas fabrica = new FabricaPartidas();
+        ControlConfigurarPartida controlador = new ControlConfigurarPartida(fabrica);
+        PantallaPrincipal pantalla = new PantallaPrincipal(controlador);
+
+        pantalla.setPartidaCreadaListener(partida -> {
+            SimuladorInicioPartida simulador = new SimuladorInicioPartida();
+            simulador.iniciar(partida);
+        });
         pantalla.setVisible(true);
     }
-    
+
 }

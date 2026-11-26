@@ -4,6 +4,7 @@
  */
 package presentacion;
 
+import control.ControlConfigurarPartida;
 import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
@@ -20,13 +21,15 @@ import javax.swing.border.LineBorder;
 public class PantallaPrincipal extends JFrame {
 
     private PartidaCreadaListener listener;
+    private final ControlConfigurarPartida controlador;
 
     private final Color AZUL_OSCURO = new Color(11, 41, 72);
 
     public JButton btnNuevaPartida;
     public JButton btnBuscarPartida;
 
-    public PantallaPrincipal() {
+    public PantallaPrincipal(ControlConfigurarPartida controlador) {
+        this.controlador=controlador;
         setTitle("Menú principal");
         setSize(700, 430);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -58,7 +61,7 @@ public class PantallaPrincipal extends JFrame {
         panelFondo.add(btnBuscarPartida);
 
         btnNuevaPartida.addActionListener(e -> {
-            PantallaConfigurarPartida P2 = new PantallaConfigurarPartida();
+            PantallaConfigurarPartida P2 = new PantallaConfigurarPartida(controlador);
             P2.setPartidaCreadaListener(listener);
             P2.setVisible(true);
             dispose();

@@ -4,7 +4,7 @@
  */
 package presentacion;
 
-import negocio.clases.Partida;
+import negocio.interfaces.IPartida;
 
 /**
  *
@@ -12,6 +12,6 @@ import negocio.clases.Partida;
  */
 public interface PartidaCreadaListener {
 
-    public void partidaCreada(Partida partida);
+    public void partidaCreada(IPartida partida);
     
 }

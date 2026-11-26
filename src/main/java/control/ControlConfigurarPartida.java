@@ -4,22 +4,28 @@
  */
 package control;
 
-import negocio.clases.Partida;
-import negocio.clases.Tablero;
-import negocio.interfaces.ObservadorPartida;
+import negocio.interfaces.IFabricaPartidas;
+import negocio.interfaces.IPartida;
 
 /**
  *
  * @author Jorge
  */
 public class ControlConfigurarPartida {
-    
-    public Partida solicitarCrearPartida(int numeroFichas, int casillasSeguras, int valorSalida, ObservadorPartida  observador) {
-        Tablero tablero=new Tablero(valorSalida,casillasSeguras);
-        Partida partida=new Partida(tablero, numeroFichas);
-        partida.agregarObservador(observador);
-        partida.notificarObservadores();
+
+    private final IFabricaPartidas fabrica;
+
+    public ControlConfigurarPartida(IFabricaPartidas fabrica) {
+        this.fabrica = fabrica;
+    }
+
+    public IPartida solicitarCrearPartida(int numeroFichas, int casillasSeguras, int valorSalida) {
+        IPartida partida = fabrica.crearPartida(numeroFichas, casillasSeguras, valorSalida);
         return partida;
     }
-    
+
+    public void confirmarConfiguracion(IPartida partida) {
+        partida.confirmarConfiguracion();
+    }
+
 }

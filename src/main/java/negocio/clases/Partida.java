@@ -29,23 +29,31 @@ public class Partida implements IPartida, SujetoPartida {
     private int bonificacionPendiente;
     private String mensajeTurno;
     private int numeroDeFichas;
+    private boolean configuracionConfirmada = false;
 
-    public Partida(Tablero tablero, int numeroDeFichas) {
+    public Partida(Tablero tablero, int numeroDeFichas, Dado dado) {
         //validamos el numero de fichas por jugador 
-        if(numeroDeFichas<3 || numeroDeFichas>6){
+        if (numeroDeFichas < 3 || numeroDeFichas > 6) {
             throw new IllegalArgumentException("El numero de fichas por jugador debe de estar entre 3 a 6 fichas");
         }
         //inicializamos las listas y las variables de control de la partida
         this.listaJugadores = new ArrayList<>();
         this.jugadorActual = null;
         this.tablero = tablero;
-        this.dado = new Dado();
+        this.dado = dado;
         this.estadoPartida = EstadoPartida.EN_CURSO;
         this.estadoTurno = EstadoTurno.ESPERANDO_TIRO;
         this.observadores = new ArrayList<>();
         this.bonificacionPendiente = 0;
         this.mensajeTurno = "Partida iniciada. Esperando lanzamiento de dado.";
         this.numeroDeFichas = numeroDeFichas;
+    }
+
+    public void confirmarConfiguracion() {
+        if (!configuracionConfirmada) {
+            configuracionConfirmada = true;
+            notificarObservadores();
+        }
     }
 
     public void agregarJugador(Jugador jugador) {
@@ -61,7 +69,7 @@ public class Partida implements IPartida, SujetoPartida {
             mensajeTurno = "Turno inicial de: " + jugadorActual.getNombre();
         }
     }
-    
+
     public List<Jugador> getListaJugadores() {
         return listaJugadores;
     }
@@ -163,7 +171,9 @@ public class Partida implements IPartida, SujetoPartida {
     public List<Ficha> evaluarMovimiento(int resultadoDado) {
         //creamos la lista donde guardaremos las fichas que se pueden mover
         List<Ficha> movibles = new ArrayList<>();
-        if (jugadorActual == null) return movibles;
+        if (jugadorActual == null) {
+            return movibles;
+        }
 
         //determinamos si vamos a mover por bonus pendiente o por el tiro del dado
         int pasos = (bonificacionPendiente > 0) ? bonificacionPendiente : resultadoDado;
@@ -175,7 +185,7 @@ public class Partida implements IPartida, SujetoPartida {
                 continue;
             }
             int posOrigen = ficha.getPosicionActual();
-            
+
             //comprobamos si la ficha esta en la base
             if (ficha.estaEnBase()) {
                 //solo se puede mover si los pasos equivalen al valor configurado de salida
@@ -200,12 +210,14 @@ public class Partida implements IPartida, SujetoPartida {
     }
 
     public boolean procesarMovimiento(Ficha ficha) {
-       if (jugadorActual == null || ficha == null) return false;
+        if (jugadorActual == null || ficha == null) {
+            return false;
+        }
 
         //obtenemos los pasos a avanzar usando el bonus o el valor del dado
         int pasos = (bonificacionPendiente > 0) ? bonificacionPendiente : dado.getValocActual();
         //reiniciamos la bonificacion pendiente porque ya se consumio
-        bonificacionPendiente = 0; 
+        bonificacionPendiente = 0;
 
         int posOrigen = ficha.getPosicionActual();
         //calculamos a que casilla debe llegar la ficha
@@ -230,8 +242,7 @@ public class Partida implements IPartida, SujetoPartida {
         if (destino.isEsMeta()) {
             ficha.llegarAMeta();
             procesarEntradaMeta(ficha, 0);
-        } 
-        //comprobamos si la casilla esta ocupada por un rival para hacer una captura
+        } //comprobamos si la casilla esta ocupada por un rival para hacer una captura
         else if (destino.estaOcupadaPorRival(ficha.getColor()) && !destino.isEsSeguro()) {
             Ficha rival = destino.obtenerFichaRival(ficha.getColor());
             ficha.moverA(destino.getNumero());
@@ -239,8 +250,7 @@ public class Partida implements IPartida, SujetoPartida {
             if (rival != null) {
                 procesarCaptura(ficha, rival);
             }
-        } 
-        //si es un movimiento normal o casilla segura simplemente movemos la ficha
+        } //si es un movimiento normal o casilla segura simplemente movemos la ficha
         else {
             ficha.moverA(destino.getNumero());
             destino.agregarFicha(ficha);
@@ -313,14 +323,18 @@ public class Partida implements IPartida, SujetoPartida {
     }
 
     public boolean verificarFinPartida() {
-        if (jugadorActual == null) return false;
+        if (jugadorActual == null) {
+            return false;
+        }
         //comprobamos si todas las fichas del jugador actual estan en la meta
         return jugadorActual.getFichas().stream()
                 .allMatch(f -> f.getEstado() == EstadoFicha.EN_META);
     }
 
     public void finalizarTurno() {
-        if (listaJugadores.isEmpty()) return;
+        if (listaJugadores.isEmpty()) {
+            return;
+        }
         //reiniciamos el contador de seises del jugador que termina
         jugadorActual.reiniciarContadorSeises();
         //obtenemos el indice del siguiente jugador de forma ciclica
@@ -341,8 +355,7 @@ public class Partida implements IPartida, SujetoPartida {
         observadores.remove(obs);
     }
 
-    @Override
-    public void notificarObservadores() {
+    private void notificarObservadores() {
         observadores.forEach(obs -> obs.actualizar(this));
     }
 
